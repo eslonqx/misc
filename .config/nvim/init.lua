@@ -3,6 +3,11 @@ vim.cmd [[
   colorscheme moonfly
 ]]
 
+-- Format on save
+vim.cmd [[
+  autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()
+]]
+
 local fn = vim.fn
 
 -- Automatically install packer
@@ -27,9 +32,6 @@ vim.cmd [[
     autocmd BufWritePost plugins.lua source <afile> | PackerSync
   augroup end
 ]]
-
--- Format on save
-vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()]]
 
 local set = vim.opt
 
@@ -76,6 +78,10 @@ keymap("n", "fh", "<cmd>lua require('telescope.builtin').help_tags()<cr>", opts)
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
 local on_attach = function(client, bufnr)
+  if client.name == "tsserver" then
+    client.resolved_capabilities.document_formatting = false
+  end
+  
   -- Enable completion triggered by <c-x><c-o>
   vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
