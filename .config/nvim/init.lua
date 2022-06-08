@@ -112,6 +112,8 @@ require('packer').startup(function()
   use 'bluz71/vim-moonfly-colors' -- Colors scheme
   use 'windwp/nvim-autopairs' -- Autopairs
   use 'windwp/nvim-ts-autotag' -- Autotag
+  use "terrortylor/nvim-comment" -- Comment
+  use 'jose-elias-alvarez/null-ls.nvim' -- Formatting
   use {
     "nvim-treesitter/nvim-treesitter", -- Treesitter
     run = ":TSUpdate",
@@ -216,8 +218,18 @@ cmp.setup {
 
 require'nvim-tree'.setup {}
 require("bufferline").setup{}
+require('nvim_comment').setup()
 require('nvim-autopairs').setup{}
 require 'nvim-web-devicons'.setup {}
+
+require("null-ls").setup({
+  sources = {
+    require("null-ls").builtins.formatting.stylua,
+    require("null-ls").builtins.formatting.prettier,
+    require("null-ls").builtins.diagnostics.eslint,
+    require("null-ls").builtins.completion.spell,
+  },
+})
 
 require'nvim-treesitter.configs'.setup {
   autotag = {
