@@ -52,20 +52,6 @@ if fn.empty(fn.glob(install_path)) > 0 then
   vim.cmd [[packadd packer.nvim]]
 end
 
--- color schemes
-vim.cmd [[colorscheme moonfly]]
-
--- format on save
-vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
-
--- autocommand that reloads neovim whenever you save the plugins.lua file
-vim.cmd [[
-  augroup packer_user_config
-    autocmd!
-    autocmd BufWritePost plugins.lua source <afile> | PackerSync
-  augroup end
-]]
-
 -- use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
 local on_attach = function(client, bufnr)
@@ -127,6 +113,20 @@ require('packer').startup(function()
     requires = 'nvim-lua/plenary.nvim'
   }
 end)
+
+-- color schemes
+vim.cmd [[colorscheme moonfly]]
+
+-- format on save
+vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
+
+-- autocommand that reloads neovim whenever you save the plugins.lua file
+vim.cmd [[
+  augroup packer_user_config
+    autocmd!
+    autocmd BufWritePost plugins.lua source <afile> | PackerSync
+  augroup end
+]]
 
 -- add additional capabilities supported by nvim-cmp
 local make_client_capabilities = vim.lsp.protocol.make_client_capabilities()
