@@ -56,7 +56,7 @@ end
 -- after the language server attaches to the current buffer
 local on_attach = function(client, bufnr)
   if client.name == 'tsserver' then
-    client.resolved_capabilities.document_formatting = false
+    client.server_capabilities.document_formatting = false
   end
 
   -- enable completion triggered by <c-x><c-o>
@@ -127,21 +127,6 @@ vim.cmd [[
   augroup end
 ]]
 
--- add additional capabilities supported by nvim-cmp
-local make_client_capabilities = vim.lsp.protocol.make_client_capabilities()
-local capabilities = require('cmp_nvim_lsp')
-    .update_capabilities(make_client_capabilities)
-
--- use a loop to conveniently call 'setup' on multiple servers and
--- map buffer local keybindings when the language server attaches
-local servers = { 'tsserver' }
-for _, lsp in pairs(servers) do
-  require('lspconfig')[lsp].setup {
-    on_attach = on_attach,
-    capabilities = capabilities,
-  }
-end
-
 require('nvim-lsp-installer').setup {
   -- automatically detect which servers to install
   -- (based on which servers are set up via lspconfig)
@@ -154,6 +139,20 @@ require('nvim-lsp-installer').setup {
     }
   }
 }
+
+-- add additional capabilities supported by nvim-cmp
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
+
+-- use a loop to conveniently call 'setup' on multiple servers and
+-- map buffer local keybindings when the language server attaches
+local servers = { 'tsserver' }
+for _, lsp in pairs(servers) do
+  require('lspconfig')[lsp].setup {
+    on_attach = on_attach,
+    capabilities = capabilities,
+  }
+end
 
 require('lspconfig')['sumneko_lua'].setup {
   settings = {
@@ -173,6 +172,16 @@ require('nvim_comment').setup {}
 require('nvim-autopairs').setup {}
 require('nvim-web-devicons').setup {}
 
+require('nvim-treesitter.configs').setup {
+  ensure_installed = { "javascript", "typescript", "c", "lua", "rust" },
+  autotag = {
+    enable = true,
+  },
+  highlight = {
+    enable = true,
+  },
+}
+
 require('null-ls').setup({
   sources = {
     require('null-ls').builtins.completion.spell,
@@ -181,15 +190,6 @@ require('null-ls').setup({
     require('null-ls').builtins.formatting.prettier,
   },
 })
-
-require('nvim-treesitter.configs').setup {
-  autotag = {
-    enable = true,
-  },
-  highlight = {
-    enable = true,
-  },
-}
 
 -- luasnip setup
 local luasnip = require('luasnip')
